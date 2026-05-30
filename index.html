@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Technical Talks Event Schedule</title>
+    <style>
+        
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1, h2 {
+    color: #0056b3;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.talk-search {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.talk-search input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.schedule-list {
+    list-style: none;
+    padding: 0;
+}
+
+.schedule-item {
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+    margin-bottom: 15px;
+    padding: 15px;
+    border-radius: 5px;
+    display: flex;
+    gap: 20px;
+}
+
+.schedule-item.break {
+    background-color: #e0f7fa;
+    border-color: #b2ebf2;
+    text-align: center;
+    font-weight: bold;
+    color: #00796b;
+    align-items: center;
+    justify-content: center;
+}
+
+.schedule-time {
+    flex: 0 0 100px;
+    font-weight: bold;
+    color: #0056b3;
+}
+
+.schedule-details {
+    flex-grow: 1;
+}
+
+.schedule-details h3 {
+    margin-top: 0;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.schedule-details p {
+    margin-bottom: 5px;
+    line-height: 1.5;
+}
+
+.schedule-details .speakers {
+    font-style: italic;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.schedule-details .categories {
+    font-size: 0.9em;
+    color: #777;
+}
+
+.category-tag {
+    display: inline-block;
+    background-color: #e2e6ea;
+    color: #495057;
+    padding: 3px 8px;
+    border-radius: 3px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+footer {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    color: #777;
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Technical Talks Event</h1>
+            <p>A day filled with insightful technical discussions.</p>
+        </header>
+
+        <section class="schedule-section">
+            <h2>Event Schedule</h2>
+            <div class="talk-search">
+                <input type="text" id="categorySearch" placeholder="Search by category (e.g., 'Web Development', 'AI/ML')...">
+            </div>
+            <ul id="scheduleList" class="schedule-list">
+                <!-- Schedule items will be rendered here by JavaScript -->
+            </ul>
+        </section>
+
+        <footer>
+            <p>&copy; 2026 Technical Talks Event. All rights reserved.</p>
+        </footer>
+    </div>
+    <script>
+        
+const schedule = [{"title":"The Future of WebAssembly","speakers":["Alice Smith"],"categories":["Web Development","Performance"],"duration":60,"description":"An in-depth look into the exciting future of WebAssembly and its impact on web development.","startTime":"10:00 AM","endTime":"11:00 AM"},{"title":"Mastering React Hooks","speakers":["Bob Johnson","Carol White"],"categories":["Frontend","React","JavaScript"],"duration":60,"description":"A practical guide to mastering React Hooks for building efficient and maintainable UIs.","startTime":"11:10 AM","endTime":"12:10 PM"},{"title":"Introduction to Machine Learning with Python","speakers":["David Green"],"categories":["AI/ML","Python","Data Science"],"duration":60,"description":"Get started with the fundamentals of Machine Learning using popular Python libraries.","startTime":"12:20 PM","endTime":"01:20 PM"},{"type":"break","title":"Lunch Break","duration":60,"startTime":"01:20 PM","endTime":"02:20 PM"},{"title":"Securing Node.js Applications","speakers":["Eve Black"],"categories":["Backend","Security","Node.js"],"duration":60,"description":"Best practices and common pitfalls to avoid when securing your Node.js applications.","startTime":"02:30 PM","endTime":"03:30 PM"},{"title":"Containerization with Docker and Kubernetes","speakers":["Frank Blue"],"categories":["DevOps","Cloud","Containers"],"duration":60,"description":"A comprehensive overview of Docker and Kubernetes for modern application deployment.","startTime":"03:40 PM","endTime":"04:40 PM"},{"title":"Building Progressive Web Apps (PWAs)","speakers":["Grace Red","Harry Yellow"],"categories":["Web Development","Mobile","Frontend"],"duration":60,"description":"Learn how to build and deploy Progressive Web Apps that offer native-like experiences.","startTime":"04:50 PM","endTime":"05:50 PM"}];
+let displayedSchedule = [...schedule];
+
+document.addEventListener('DOMContentLoaded', () => {
+    renderSchedule(schedule);
+
+    const searchInput = document.getElementById('categorySearch');
+    if (searchInput) {
+        searchInput.addEventListener('input', (event) => {
+            const searchTerm = event.target.value.toLowerCase().trim();
+            filterSchedule(searchTerm);
+        });
+    }
+});
+
+function renderSchedule(data) {
+    const scheduleList = document.getElementById('scheduleList');
+    if (!scheduleList) return;
+
+    scheduleList.innerHTML = ''; // Clear existing list
+
+    data.forEach(item => {
+        const li = document.createElement('li');
+        li.classList.add('schedule-item');
+        if (item.type === 'break') {
+            li.classList.add('break');
+            li.innerHTML = '<div class="schedule-time">' + item.startTime + ' - ' + item.endTime + '</div>' +
+                           '<div class="schedule-details">' +
+                           '<h3>' + item.title + '</h3>' +
+                           '</div>';
+        } else {
+            const categoriesHtml = item.categories.map(cat => '<span class="category-tag">' + cat + '</span>').join('');
+            li.innerHTML = '<div class="schedule-time">' + item.startTime + ' - ' + item.endTime + '</div>' +
+                           '<div class="schedule-details">' +
+                           '<h3>' + item.title + '</h3>' +
+                           '<p class="speakers">Speakers: ' + item.speakers.join(', ') + '</p>' +
+                           '<p>' + item.description + '</p>' +
+                           '<div class="categories">Categories: ' + categoriesHtml + '</div>' +
+                           '</div>';
+        }
+        scheduleList.appendChild(li);
+    });
+}
+
+function filterSchedule(searchTerm) {
+    if (!searchTerm) {
+        displayedSchedule = [...schedule];
+    } else {
+        displayedSchedule = schedule.filter(item => {
+            if (item.type === 'break') return false; // Don't filter breaks
+            return item.categories.some(cat => cat.toLowerCase().includes(searchTerm));
+        });
+    }
+    renderSchedule(displayedSchedule);
+}
+
+    </script>
+</body>
+</html>
